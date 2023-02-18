@@ -46,7 +46,7 @@ public:
 
     static std::pair< std::shared_ptr< std::vector< std::shared_ptr< TEPrivateKeyShare > > >,
         std::shared_ptr< TEPublicKey > >
-    generateSampleKeys( size_t _requiredSigners, size_t _totalSigners );
+    generateSampleKeys( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint = INT_MAX );
 
     std::string toString() const;
 

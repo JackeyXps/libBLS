@@ -27,11 +27,11 @@
 
 #include <tools/utils.h>
 
-DKGBLSWrapper::DKGBLSWrapper( size_t _requiredSigners, size_t _totalSigners )
+DKGBLSWrapper::DKGBLSWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint)
     : requiredSigners( _requiredSigners ), totalSigners( _totalSigners ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
-    DKGBLSSecret temp( _requiredSigners, _totalSigners );
+    DKGBLSSecret temp( _requiredSigners, _totalSigners, _encodedPoint );
     dkg_secret_ptr = std::make_shared< DKGBLSSecret >( temp );
 }
 

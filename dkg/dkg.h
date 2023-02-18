@@ -35,7 +35,7 @@ class Dkg {
 public:
     Dkg( const size_t t, const size_t n );
 
-    std::vector< libff::alt_bn128_Fr > GeneratePolynomial();
+    std::vector< libff::alt_bn128_Fr > GeneratePolynomial(size_t encodedPoint = INT_MAX);
 
     std::vector< libff::alt_bn128_G2 > VerificationVector(
         const std::vector< libff::alt_bn128_Fr >& polynomial );

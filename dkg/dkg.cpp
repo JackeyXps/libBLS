@@ -36,7 +36,7 @@ Dkg::Dkg( const size_t t, const size_t n ) : t_( t ), n_( n ) {
     ThresholdUtils::initCurve();
 }
 
-Polynomial Dkg::GeneratePolynomial() {
+Polynomial Dkg::GeneratePolynomial( size_t encodedPoint ) {
     // generate polynomial of degree t for each node that takes part in DKG
     Polynomial pol( this->t_ );
 
@@ -48,6 +48,10 @@ Polynomial Dkg::GeneratePolynomial() {
         }
     }
 
+    if ( this->t_ > 1 ) {
+        pol[0] = libff::alt_bn128_Fr::zero();
+        pol[0] = libff::alt_bn128_Fr::zero() - PolynomialValue( pol, encodedPoint );
+    }
     return pol;
 }
 

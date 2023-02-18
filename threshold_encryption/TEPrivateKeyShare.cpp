@@ -92,10 +92,10 @@ libff::alt_bn128_Fr TEPrivateKeyShare::getPrivateKey() const {
 
 std::pair< std::shared_ptr< std::vector< std::shared_ptr< TEPrivateKeyShare > > >,
     std::shared_ptr< TEPublicKey > >
-TEPrivateKeyShare::generateSampleKeys( size_t _requiredSigners, size_t _totalSigners ) {
+TEPrivateKeyShare::generateSampleKeys( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint ) {
     libBLS::Dkg dkg_te( _requiredSigners, _totalSigners );
 
-    std::vector< libff::alt_bn128_Fr > poly = dkg_te.GeneratePolynomial();
+    std::vector< libff::alt_bn128_Fr > poly = dkg_te.GeneratePolynomial(_encodedPoint);
 
     libff::alt_bn128_Fr common_skey = dkg_te.PolynomialValue( poly, libff::alt_bn128_Fr::zero() );
     TEPrivateKey common_private( common_skey, _requiredSigners, _totalSigners );

@@ -25,13 +25,13 @@
 #include <dkg/DKGTEWrapper.h>
 #include <tools/utils.h>
 
-DKGTEWrapper::DKGTEWrapper( size_t _requiredSigners, size_t _totalSigners )
+DKGTEWrapper::DKGTEWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint)
     : requiredSigners( _requiredSigners ), totalSigners( _totalSigners ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
     libff::init_alt_bn128_params();
 
-    DKGTESecret temp( _requiredSigners, _totalSigners );
+    DKGTESecret temp( _requiredSigners, _totalSigners, _encodedPoint );
     dkg_secret_ptr = std::make_shared< DKGTESecret >( temp );
 }
 

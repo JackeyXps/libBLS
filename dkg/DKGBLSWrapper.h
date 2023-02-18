@@ -36,7 +36,7 @@ private:
     std::shared_ptr< DKGBLSSecret > dkg_secret_ptr = NULL;
 
 public:
-    DKGBLSWrapper( size_t _requiredSigners, size_t _totalSigners );
+    DKGBLSWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint = INT_MAX );
 
     bool VerifyDKGShare( size_t signerIndex, const libff::alt_bn128_Fr& share,
         std::shared_ptr< std::vector< libff::alt_bn128_G2 > > _verification_vector );

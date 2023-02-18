@@ -33,7 +33,7 @@ private:
     std::vector< libff::alt_bn128_Fr > poly;
 
 public:
-    DKGBLSSecret( size_t _requiredSigners, size_t _totalSigners );
+    DKGBLSSecret( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint );
     void setPoly( std::vector< libff::alt_bn128_Fr > _poly );
     std::vector< libff::alt_bn128_Fr > getDKGBLSSecretShares();
     std::vector< libff::alt_bn128_G2 > getDKGBLSPublicShares();
