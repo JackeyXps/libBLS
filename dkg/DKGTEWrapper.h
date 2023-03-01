@@ -53,7 +53,7 @@ public:
 
     static TEPublicKey CreateTEPublicKey(
         std::shared_ptr< std::vector< std::vector< libff::alt_bn128_G2 > > > public_shares_all,
-        size_t _requiredSigners, size_t _totalSigners );
+        size_t _requiredSigners, size_t _totalSigners, std::vector<size_t> contribution_id );
 };
 
 

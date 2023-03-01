@@ -37,7 +37,7 @@ Dkg::Dkg( const size_t t, const size_t n ) : t_( t ), n_( n ) {
 }
 
 Polynomial Dkg::GeneratePolynomial( size_t encodedPoint ) {
-    // generate polynomial of degree t for each node that takes part in DKG
+    // generate polynomial of degree t-1 for each node that takes part in DKG
     Polynomial pol( this->t_ );
 
     for ( size_t i = 0; i < this->t_; ++i ) {
@@ -98,7 +98,7 @@ libff::alt_bn128_Fr Dkg::SecretKeyShareCreate(
     // create secret key share from secret key contribution
     libff::alt_bn128_Fr secret_key_share = libff::alt_bn128_Fr::zero();
 
-    for ( size_t i = 0; i < this->n_; ++i ) {
+    for ( size_t i = 0; i < this->t_; ++i ) {
         secret_key_share = secret_key_share + secret_key_contribution[i];
     }
 

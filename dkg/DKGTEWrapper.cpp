@@ -25,7 +25,7 @@
 #include <dkg/DKGTEWrapper.h>
 #include <tools/utils.h>
 
-DKGTEWrapper::DKGTEWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint)
+DKGTEWrapper::DKGTEWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint )
     : requiredSigners( _requiredSigners ), totalSigners( _totalSigners ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
@@ -68,7 +68,7 @@ TEPrivateKeyShare DKGTEWrapper::CreateTEPrivateKeyShare(
     size_t signerIndex_, std::shared_ptr< std::vector< libff::alt_bn128_Fr > > secret_shares_ptr ) {
     if ( secret_shares_ptr == nullptr )
         throw libBLS::ThresholdUtils::IncorrectInput( "Null secret_shares_ptr " );
-    if ( secret_shares_ptr->size() != totalSigners )
+    if ( secret_shares_ptr->size() != requiredSigners )
         throw libBLS::ThresholdUtils::IncorrectInput( "Wrong number of secret key parts " );
 
     libBLS::Dkg dkg_te( requiredSigners, totalSigners );
@@ -79,17 +79,21 @@ TEPrivateKeyShare DKGTEWrapper::CreateTEPrivateKeyShare(
 }
 
 TEPublicKey DKGTEWrapper::CreateTEPublicKey(
-    std::shared_ptr< std::vector< std::vector< libff::alt_bn128_G2 > > > public_shares_all,
-    size_t _requiredSigners, size_t _totalSigners ) {
+    std::shared_ptr< std::vector< std::vector< libff::alt_bn128_G2 > > > public_shares,
+    size_t _requiredSigners, size_t _totalSigners, std::vector<size_t> contribution_id ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
-    if ( public_shares_all == nullptr )
+    if ( public_shares == nullptr )
         throw libBLS::ThresholdUtils::IncorrectInput( "Null public shares all" );
+
+    if (contribution_id.size() != _requiredSigners){
+        throw libBLS::ThresholdUtils::IncorrectInput( "Wrong number of public key parts " );
+    }
 
     libff::alt_bn128_G2 public_key = libff::alt_bn128_G2::zero();
 
-    for ( size_t i = 0; i < _totalSigners; i++ ) {
-        public_key = public_key + public_shares_all->at( i ).at( 0 );
+    for ( size_t i = 0; i < contribution_id.size(); i++ ) {
+        public_key = public_key + public_shares->at(i).at( 0 );
     }
 
     TEPublicKey common_public( public_key, _requiredSigners, _totalSigners );

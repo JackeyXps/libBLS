@@ -70,7 +70,7 @@ BLSPrivateKeyShare DKGBLSWrapper::CreateBLSPrivateKeyShare(
     if ( secret_shares_ptr == nullptr )
         throw libBLS::ThresholdUtils::IncorrectInput( "Null secret_shares_ptr " );
 
-    if ( secret_shares_ptr->size() != totalSigners )
+    if ( secret_shares_ptr->size() != requiredSigners)
         throw libBLS::ThresholdUtils::IncorrectInput( "Wrong number of secret key parts " );
 
     libBLS::Dkg dkg( requiredSigners, totalSigners );
