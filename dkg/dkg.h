@@ -35,7 +35,8 @@ class Dkg {
 public:
     Dkg( const size_t t, const size_t n );
 
-    std::vector< libff::alt_bn128_Fr > GeneratePolynomial(size_t encodedPoint = INT_MAX);
+    std::vector< libff::alt_bn128_Fr > GeneratePolynomial(
+        size_t encodedPointX = -1, size_t encodedConstantY = -1 );
 
     std::vector< libff::alt_bn128_G2 > VerificationVector(
         const std::vector< libff::alt_bn128_Fr >& polynomial );
@@ -49,8 +50,14 @@ public:
     libff::alt_bn128_Fr SecretKeyShareCreate(
         const std::vector< libff::alt_bn128_Fr >& secret_key_contribution );
 
+    libff::alt_bn128_Fr SecretKeyShareCreateForT(
+        const std::vector< libff::alt_bn128_Fr >& secret_key_contribution );
+
     bool Verification( size_t idx, libff::alt_bn128_Fr share,
         const std::vector< libff::alt_bn128_G2 >& verification_vector );
+
+    bool PolynomialsPropertyVerification(
+        size_t idx, const std::vector< std::vector< libff::alt_bn128_G2 > >& verification_vectors );
 
     libff::alt_bn128_G2 GetPublicKeyFromSecretKey( const libff::alt_bn128_Fr& secret_key );
 

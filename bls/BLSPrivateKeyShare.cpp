@@ -118,13 +118,15 @@ std::shared_ptr< BLSSigShare > BLSPrivateKeyShare::signWithHelper(
 
 std::shared_ptr< std::pair< std::shared_ptr< std::vector< std::shared_ptr< BLSPrivateKeyShare > > >,
     std::shared_ptr< BLSPublicKey > > >
-BLSPrivateKeyShare::generateSampleKeys( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint ) {
+BLSPrivateKeyShare::generateSampleKeys( size_t _requiredSigners, size_t _totalSigners,
+    size_t _encodedPointX, size_t _encodedConstantY ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
     std::vector< std::shared_ptr< BLSPrivateKeyShare > > skeys_shares;
 
     libBLS::Dkg dkg_obj = libBLS::Dkg( _requiredSigners, _totalSigners );
-    const std::vector< libff::alt_bn128_Fr > pol = dkg_obj.GeneratePolynomial(_encodedPoint);
+    const std::vector< libff::alt_bn128_Fr > pol =
+        dkg_obj.GeneratePolynomial( _encodedPointX, _encodedConstantY );
     std::vector< libff::alt_bn128_Fr > skeys = dkg_obj.SecretKeyContribution( pol );
 
     libff::alt_bn128_Fr common_skey = pol.at( 0 );

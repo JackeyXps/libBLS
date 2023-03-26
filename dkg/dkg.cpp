@@ -36,7 +36,7 @@ Dkg::Dkg( const size_t t, const size_t n ) : t_( t ), n_( n ) {
     ThresholdUtils::initCurve();
 }
 
-Polynomial Dkg::GeneratePolynomial( size_t encodedPoint ) {
+Polynomial Dkg::GeneratePolynomial( size_t encodedPointX, size_t encodedConstantY ) {
     // generate polynomial of degree t-1 for each node that takes part in DKG
     Polynomial pol( this->t_ );
 
@@ -49,8 +49,12 @@ Polynomial Dkg::GeneratePolynomial( size_t encodedPoint ) {
     }
 
     if ( this->t_ > 1 ) {
-        pol[0] = libff::alt_bn128_Fr::zero();
-        pol[0] = libff::alt_bn128_Fr::zero() - PolynomialValue( pol, encodedPoint );
+        if ( encodedPointX != (size_t)-1 ) {
+            pol[0] = libff::alt_bn128_Fr::zero();
+            pol[0] = libff::alt_bn128_Fr::zero() - PolynomialValue( pol, encodedPointX );
+        } else if ( encodedConstantY != (size_t)-1 ) {
+            pol[0] = encodedConstantY;
+        }
     }
     return pol;
 }
@@ -98,6 +102,22 @@ libff::alt_bn128_Fr Dkg::SecretKeyShareCreate(
     // create secret key share from secret key contribution
     libff::alt_bn128_Fr secret_key_share = libff::alt_bn128_Fr::zero();
 
+    for ( size_t i = 0; i < this->n_; ++i ) {
+        secret_key_share = secret_key_share + secret_key_contribution[i];
+    }
+
+    if ( secret_key_share == libff::alt_bn128_Fr::zero() ) {
+        throw std::logic_error( "Error, at least one secret key share is equal to zero" );
+    }
+
+    return secret_key_share;
+}
+
+libff::alt_bn128_Fr Dkg::SecretKeyShareCreateForT(
+    const std::vector< libff::alt_bn128_Fr >& secret_key_contribution ) {
+    // create secret key share from secret key contribution
+    libff::alt_bn128_Fr secret_key_share = libff::alt_bn128_Fr::zero();
+
     for ( size_t i = 0; i < this->t_; ++i ) {
         secret_key_share = secret_key_share + secret_key_contribution[i];
     }
@@ -121,6 +141,30 @@ bool Dkg::Verification( size_t idx, libff::alt_bn128_Fr share,
     }
 
     return ( value == share * libff::alt_bn128_G2::one() );
+}
+
+bool Dkg::PolynomialsPropertyVerification(
+    size_t x, const std::vector< std::vector< libff::alt_bn128_G2 > >& verification_vectors ) {
+    libff::alt_bn128_G2 value = libff::alt_bn128_G2::zero();
+    for ( size_t i = 0; i < this->t_; ++i ) {
+        libff::alt_bn128_G2 temp_value = libff::alt_bn128_G2::zero();
+        for ( size_t j = 0; j < this->t_; ++j ) {
+            if ( !ThresholdUtils::ValidateKey( verification_vectors.at(i).at(j) ) ) {
+                return false;
+            }
+            if ( i == 0 ) {
+                value =
+                    value + power( libff::alt_bn128_Fr( x ), j ) * verification_vectors.at(i).at(j);
+            } else {
+                temp_value = temp_value + power( libff::alt_bn128_Fr( x ), j ) *
+                                              verification_vectors.at(i).at(j);
+            }
+        }
+        if ( i != 0 && value != temp_value ) {
+            return false;
+        }
+    }
+    return true;
 }
 
 libff::alt_bn128_G2 Dkg::GetPublicKeyFromSecretKey( const libff::alt_bn128_Fr& secret_key ) {

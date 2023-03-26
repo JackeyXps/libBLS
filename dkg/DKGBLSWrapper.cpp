@@ -27,11 +27,12 @@
 
 #include <tools/utils.h>
 
-DKGBLSWrapper::DKGBLSWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint)
+DKGBLSWrapper::DKGBLSWrapper(
+    size_t _requiredSigners, size_t _totalSigners, size_t _encodedPointX, size_t _encodedConstantY )
     : requiredSigners( _requiredSigners ), totalSigners( _totalSigners ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
-    DKGBLSSecret temp( _requiredSigners, _totalSigners, _encodedPoint );
+    DKGBLSSecret temp( _requiredSigners, _totalSigners, _encodedPointX, _encodedConstantY );
     dkg_secret_ptr = std::make_shared< DKGBLSSecret >( temp );
 }
 
@@ -70,12 +71,27 @@ BLSPrivateKeyShare DKGBLSWrapper::CreateBLSPrivateKeyShare(
     if ( secret_shares_ptr == nullptr )
         throw libBLS::ThresholdUtils::IncorrectInput( "Null secret_shares_ptr " );
 
-    if ( secret_shares_ptr->size() != requiredSigners)
+    if ( secret_shares_ptr->size() != totalSigners )
         throw libBLS::ThresholdUtils::IncorrectInput( "Wrong number of secret key parts " );
 
     libBLS::Dkg dkg( requiredSigners, totalSigners );
 
     libff::alt_bn128_Fr skey_share = dkg.SecretKeyShareCreate( *secret_shares_ptr );
+
+    return BLSPrivateKeyShare( skey_share, requiredSigners, totalSigners );
+}
+
+BLSPrivateKeyShare DKGBLSWrapper::CreateBLSPrivateKeyShareForT(
+    std::shared_ptr< std::vector< libff::alt_bn128_Fr > > secret_shares_ptr ) {
+    if ( secret_shares_ptr == nullptr )
+        throw libBLS::ThresholdUtils::IncorrectInput( "Null secret_shares_ptr " );
+
+    if ( secret_shares_ptr->size() != requiredSigners )
+        throw libBLS::ThresholdUtils::IncorrectInput( "Wrong number of secret key parts " );
+
+    libBLS::Dkg dkg( requiredSigners, totalSigners );
+
+    libff::alt_bn128_Fr skey_share = dkg.SecretKeyShareCreateForT( *secret_shares_ptr );
 
     return BLSPrivateKeyShare( skey_share, requiredSigners, totalSigners );
 }

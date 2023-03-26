@@ -26,12 +26,13 @@
 #include <dkg/dkg.h>
 #include <tools/utils.h>
 
-DKGBLSSecret::DKGBLSSecret( size_t _requiredSigners, size_t _totalSigners , size_t _encodedPoint)
+DKGBLSSecret::DKGBLSSecret(
+    size_t _requiredSigners, size_t _totalSigners, size_t _encodedPointX, size_t _encodedConstantY )
     : requiredSigners( _requiredSigners ), totalSigners( _totalSigners ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
     libBLS::Dkg dkg( requiredSigners, totalSigners );
-    poly = dkg.GeneratePolynomial(_encodedPoint);
+    poly = dkg.GeneratePolynomial( _encodedPointX, _encodedConstantY );
 }
 
 void DKGBLSSecret::setPoly( std::vector< libff::alt_bn128_Fr > _poly ) {

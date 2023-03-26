@@ -34,7 +34,8 @@ private:
     std::vector< libff::alt_bn128_Fr > poly;
 
 public:
-    DKGTESecret( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint );
+    DKGTESecret( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPointX,
+        size_t _encodedConstantY );
     void setPoly( std::vector< libff::alt_bn128_Fr >& _poly );
     std::vector< libff::alt_bn128_Fr > getDKGTESecretShares();
     std::vector< libff::alt_bn128_G2 > getDKGTEPublicShares();

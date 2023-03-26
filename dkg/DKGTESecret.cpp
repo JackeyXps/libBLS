@@ -27,14 +27,15 @@
 
 #include <dkg/dkg.h>
 
-DKGTESecret::DKGTESecret( size_t _requiredSigners, size_t _totalSigners, size_t _encodePoint)
+DKGTESecret::DKGTESecret(
+    size_t _requiredSigners, size_t _totalSigners, size_t _encodedPointX, size_t _encodedConstantY )
     : requiredSigners( _requiredSigners ), totalSigners( _totalSigners ) {
     libBLS::ThresholdUtils::checkSigners( _requiredSigners, _totalSigners );
 
     libff::init_alt_bn128_params();
 
     libBLS::Dkg dkg_te( requiredSigners, totalSigners );
-    poly = dkg_te.GeneratePolynomial(_encodePoint);
+    poly = dkg_te.GeneratePolynomial( _encodedPointX, _encodedConstantY );
 }
 
 void DKGTESecret::setPoly( std::vector< libff::alt_bn128_Fr >& _poly ) {

@@ -37,7 +37,8 @@ private:
     std::shared_ptr< DKGTESecret > dkg_secret_ptr = NULL;
 
 public:
-    DKGTEWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPoint = INT_MAX );
+    DKGTEWrapper( size_t _requiredSigners, size_t _totalSigners, size_t _encodedPointX = -1,
+        size_t _encodedConstantY = -1 );
 
     bool VerifyDKGShare( size_t signerIndex, const libff::alt_bn128_Fr& share,
         std::shared_ptr< std::vector< libff::alt_bn128_G2 > > verification_vector );
@@ -51,9 +52,16 @@ public:
     TEPrivateKeyShare CreateTEPrivateKeyShare( size_t signerIndex_,
         std::shared_ptr< std::vector< libff::alt_bn128_Fr > > secret_shares_ptr );
 
+    TEPrivateKeyShare CreateTEPrivateKeyShareForT( size_t signerIndex_,
+        std::shared_ptr< std::vector< libff::alt_bn128_Fr > > secret_shares_ptr );
+
     static TEPublicKey CreateTEPublicKey(
         std::shared_ptr< std::vector< std::vector< libff::alt_bn128_G2 > > > public_shares_all,
-        size_t _requiredSigners, size_t _totalSigners, std::vector<size_t> contribution_id );
+        size_t _requiredSigners, size_t _totalSigners );
+
+    static TEPublicKey CreateTEPublicKey(
+        std::shared_ptr< std::vector< std::vector< libff::alt_bn128_G2 > > > public_shares_all,
+        size_t _requiredSigners, size_t _totalSigners, std::vector< size_t > contribution_id );
 };
 
 
