@@ -146,9 +146,12 @@ bool Dkg::Verification( size_t idx, libff::alt_bn128_Fr share,
 bool Dkg::PolynomialsPropertyVerification(
     size_t x, const std::vector< std::vector< libff::alt_bn128_G2 > >& verification_vectors ) {
     libff::alt_bn128_G2 value = libff::alt_bn128_G2::zero();
-    for ( size_t i = 0; i < this->t_; ++i ) {
+    for ( size_t i = 0; i < verification_vectors.size(); ++i ) {
         libff::alt_bn128_G2 temp_value = libff::alt_bn128_G2::zero();
         for ( size_t j = 0; j < this->t_; ++j ) {
+            if (verification_vectors.at(i).size() <= j) {
+                continue;
+            }
             if ( !ThresholdUtils::ValidateKey( verification_vectors.at(i).at(j) ) ) {
                 return false;
             }
